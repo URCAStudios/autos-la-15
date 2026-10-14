@@ -8,14 +8,14 @@ Sitio estático **Astro 6** con **Sanity Studio** embebido en `/studio`. Build: 
 | **Studio** | https://autosla15.com/studio |
 | **Pages (respaldo)** | https://autos-la-15.pages.dev |
 
-Guía para el cliente (sin detalle técnico): [odd/handoff/autosla15-real-site.md](odd/handoff/autosla15-real-site.md) · PDF: [odd/handoff/Autos-La-15-Entrega-Sitio.pdf](odd/handoff/Autos-La-15-Entrega-Sitio.pdf)
+Guía para el cliente (sin detalle técnico): [odd/handoff/autosla15-real-site.md](odd/handoff/autosla15-real-site.md) · PDF: [odd/handoff/Autos-La-15-Entrega-Sitio.pdf](odd/handoff/Autos-La-15-Entrega-Sitio.pdf) · Google (cuenta cliente): [odd/handoff/Google-Autos-La-15-Guia-Analytics-Search-Cliente.pdf](odd/handoff/Google-Autos-La-15-Guia-Analytics-Search-Cliente.pdf)
 
 ## Hosting y dominio
 
 - **Cloudflare Pages** — proyecto `autos-la-15`, rama de producción `main` (Git: repositorio **público** [URCAStudios/autos-la-15](https://github.com/URCAStudios/autos-la-15)).
 - **Cuenta cliente** — account ID `4d7b9cf1dfdca6bf57d5e857bc381f8d` (facturación del dominio en esa cuenta).
 - **Dominio** — `autosla15.com` (apex canónico); `www` → redirect 301 al apex.
-- Guías PDF onboarding cliente: `odd/handoff/Cloudflare-Autos-La-15-Guia-Cliente.pdf`, `odd/handoff/Cloudflare-Autos-La-15-Guia-Dominio-Cliente.pdf`.
+- Guías PDF onboarding cliente: `odd/handoff/Cloudflare-Autos-La-15-Guia-Cliente.pdf`, `odd/handoff/Cloudflare-Autos-La-15-Guia-Dominio-Cliente.pdf`, `odd/handoff/Google-Autos-La-15-Guia-Analytics-Search-Cliente.pdf`.
 
 ## Variables de entorno (Pages — Production y Preview)
 
@@ -26,6 +26,8 @@ Guía para el cliente (sin detalle técnico): [odd/handoff/autosla15-real-site.m
 | `SANITY_API_VERSION` | `2026-09-21` |
 | `NODE_VERSION` | `22` |
 | `PUBLIC_SITE_URL` | `https://autosla15.com` |
+| `PUBLIC_GA_MEASUREMENT_ID` | *(pendiente)* ID `G-…` de la propiedad GA4 del **cliente** |
+| `PUBLIC_GSC_VERIFICATION` | *(opcional)* solo si GSC se verifica por meta HTML en lugar de DNS TXT |
 
 Tras cambiar la URL pública: actualizar `PUBLIC_SITE_URL`, CORS + `sanity deploy --external`, redeploy Pages.
 
@@ -82,6 +84,25 @@ Tras el primer deploy de esta funcionalidad, ejecutar `npm run migrate:car-order
 
 No commitear `.env` ni tokens.
 
+## Google Analytics y Search Console
+
+**Propiedad:** cuentas Google del **cliente**; desarrollador `furdac14@gmail.com` como Admin (GA4) y Full (GSC). Guía solo para el cliente: `odd/handoff/Google-Autos-La-15-Guia-Analytics-Search-Cliente.pdf` — `node odd/handoff/render-google-analytics-guia-pdf.mjs`.
+
+### Flujo
+
+| Fase | Quién | Acción |
+|------|--------|--------|
+| 1 | Cliente | GA4 + flujo web `https://autosla15.com`; envía **Measurement ID** `G-…`; invita al desarrollador |
+| 2 | Cliente | GSC propiedad **dominio** `autosla15.com`; envía **TXT** de verificación; invita al desarrollador; pulsa Verificar tras confirmación |
+| 3 | Desarrollador | Pages: `PUBLIC_GA_MEASUREMENT_ID=G-…` → redeploy; TXT en DNS zona `autosla15.com` (cuenta cliente) |
+| 4 | Desarrollador | GSC: sitemap `https://autosla15.com/sitemap-index.xml`, inspección URL home, asociar GA4 si aplica |
+
+Código: `src/components/GoogleSiteTags.astro` en la home pública (`/studio` sin GA). Verificación GSC preferida: **DNS TXT** (no requiere `PUBLIC_GSC_VERIFICATION`).
+
+### Estado actual
+
+- GA4 / GSC: **pendiente** hasta que el cliente complete la guía PDF y comparta `G-…` + TXT.
+
 ## Verificación rápida
 
 - https://autosla15.com/
@@ -89,8 +110,9 @@ No commitear `.env` ni tokens.
 - https://autosla15.com/sitemap-index.xml
 - https://www.autosla15.com/ → apex
 
-## Regenerar PDF de entrega al cliente
+## Regenerar PDFs de handoff
 
 ```bash
 node odd/handoff/render-handoff-pdf.mjs
+node odd/handoff/render-google-analytics-guia-pdf.mjs
 ```

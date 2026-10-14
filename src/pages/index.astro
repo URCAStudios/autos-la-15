@@ -2,6 +2,7 @@
 import { sanityClient } from 'sanity:client';
 import fallbackHero from '../../assets/hero-image-large.jpg';
 import fallbackHistory from '../../assets/who-are-we-image.jpg';
+import GoogleSiteTags from '../components/GoogleSiteTags.astro';
 import { createSanityImageBuilder, type SanityImage } from '../lib/sanityImage';
 import '../styles/global.css';
 
@@ -249,6 +250,7 @@ const structuredData = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <GoogleSiteTags />
     <meta name="description" content={metaDescription} />
     <meta property="og:title" content={`${brandName} | ${tagline}`} />
     <meta property="og:description" content={metaDescription} />
