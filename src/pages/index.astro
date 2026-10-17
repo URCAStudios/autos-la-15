@@ -157,7 +157,7 @@ const historySrc = images.url(home.history?.image, { width: 1600 }) || fallbackH
 const historyAlt = home.history?.image?.alt ?? 'Fachada de Autos La 15';
 
 const cardImageUrl = (image: SanityImage | undefined) =>
-  images.url(image, { width: 1800, height: 1100, fit: 'crop' });
+  images.url(image, { width: 1800 });
 
 const vehicleImages = (car: Car): SanityImage[] => {
   if (car.images?.length) return car.images;
@@ -432,7 +432,6 @@ const structuredData = {
                           src={cardImageUrl(photo)}
                           alt={photo.alt ?? car.name}
                           width="1800"
-                          height="1100"
                           loading={index === 0 && photoIndex === 0 ? 'eager' : 'lazy'}
                         />
                       ))}
