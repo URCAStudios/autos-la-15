@@ -4,6 +4,7 @@ import fallbackHero from '../../assets/hero-image-large.jpg';
 import fallbackHistory from '../../assets/who-are-we-image.jpg';
 import GoogleSiteTags from '../components/GoogleSiteTags.astro';
 import { createSanityImageBuilder, type SanityImage } from '../lib/sanityImage';
+import { assignSlugs } from '../lib/vehicles';
 import '../styles/global.css';
 
 type Link = { label?: string; href?: string; openInNewTab?: boolean };
@@ -127,7 +128,7 @@ const [siteSettings, homePage, carsFromCms] = await Promise.all([
     }`),
 ]);
 
-const cars = sortCarsForPresentation(carsFromCms);
+const cars = assignSlugs(sortCarsForPresentation(carsFromCms));
 
 const settings = siteSettings ?? {};
 const home = homePage ?? {};
@@ -487,13 +488,14 @@ const structuredData = {
                     <div class="vehicle-card-shade" aria-hidden="true"></div>
                     <div class="vehicle-card-copy">
                       <div class="vehicle-card-footer">
-                        <h3 id={`vehiculo-titulo-${car._id}`}>{car.name}</h3>
+                        <h3 id={`vehiculo-titulo-${car._id}`}><a href={`/vehiculos/${car.slug}`}>{car.name}</a></h3>
                         <p class="vehicle-price">{formatPrice(car.price)}</p>
                         <div class="vehicle-card-actions">
                           <a class="btn vehicle-btn-primary" target="_blank" rel="noopener" href={whatsappHref(car.whatsappMessage ?? `Hola AUTOS LA 15, me interesa el ${car.name}. ¿Me comparten más información?`)}>
                             {catalog.vehiclePrimaryButton ?? 'Consultar vehículo'}
                           </a>
                           <a class="btn vehicle-btn-secondary" href="#contacto">{catalog.vehicleSecondaryButton ?? 'Agendar visita'}</a>
+                          <a class="vehicle-card-details" href={`/vehiculos/${car.slug}`}>Ver ficha</a>
                         </div>
                       </div>
                     </div>

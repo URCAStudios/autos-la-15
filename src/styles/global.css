@@ -183,6 +183,9 @@ p { margin: 0 0 16px; color: var(--text-muted); }
 .vehicle-card-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 27, 43, .46) 0%, rgba(7, 27, 43, .08) 28%, rgba(7, 27, 43, .05) 46%, rgba(7, 27, 43, .62) 72%, rgba(7, 27, 43, .9) 100%); }
 .vehicle-card-copy { position: relative; z-index: 1; display: flex; height: 100%; flex-direction: column; justify-content: flex-end; padding: clamp(22px, 3.2vw, 40px); }
 .vehicle-card h3 { margin: 0 0 8px; color: #fff; font-size: clamp(2rem, 4.2vw, 3.5rem); font-weight: 600; letter-spacing: -.03em; line-height: 1.02; }
+.vehicle-card h3 a { color: inherit; }
+.vehicle-card h3 a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.vehicle-card-details { flex-basis: 100%; color: #fff; font-family: var(--font-display); font-size: .9rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .vehicle-price { margin: 0 0 18px; color: #fff; font-family: var(--font-body); font-size: clamp(1.05rem, 1.5vw, 1.3rem); font-weight: 500; }
 .vehicle-card-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .vehicle-card .btn { min-width: 156px; border-radius: 8px; transform: none; }
