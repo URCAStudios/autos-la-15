@@ -26,6 +26,7 @@ const vehicles = [
     name: 'Chevrolet Cruze 2014',
     image: 'cruze-2014.jpg',
     year: 2014,
+    kilometers: 107000,
     price: 10500,
     description:
       'Sedán negro con motor 1.8 L y 107 mil km. Cuenta con servicio reciente al cuerpo de aceleración y bujías, batería reemplazada, cauchos en muy buen estado, pintura de hace un año y tren delantero nuevo. Título 3–1.',
@@ -36,6 +37,7 @@ const vehicles = [
     name: 'Chevrolet Cruze 2015',
     image: 'cruze-2015.jpg',
     year: 2015,
+    kilometers: 129000,
     price: 13000,
     description:
       'Sedán negro con motor 1.8 L y 129 mil km. Está muy conservado, con pintura, cauchos, aire acondicionado y tapicería en excelentes condiciones. Incluye caucho de repuesto y herramientas. Título 3–1.',
@@ -46,6 +48,7 @@ const vehicles = [
     name: 'Ford Fiesta Titanium 2015',
     image: 'fiesta-2015.jpg',
     year: 2015,
+    kilometers: 97000,
     price: 12500,
     description:
       'Una alternativa económica y bien cuidada, con motor 1.6 L y 97 mil km. Conserva en muy buen estado la pintura, tapicería, aire acondicionado y cauchos. Título 3–1.',
@@ -56,6 +59,7 @@ const vehicles = [
     name: 'Ford Fiesta Titanium 2016',
     image: 'fiesta-2016.jpg',
     year: 2016,
+    kilometers: 119000,
     price: 14000,
     description:
       'De único dueño, con motor 1.6 L y 119 mil km. Fue recién pintado y se encuentra muy conservado. Incluye certificado de origen, factura de compra, caucho de repuesto y herramientas.',
@@ -66,6 +70,7 @@ const vehicles = [
     name: 'Ford Explorer XLT 2011',
     image: 'explorer-xlt-2011.jpg',
     year: 2011,
+    kilometers: 137000,
     price: 13700,
     description:
       'Camioneta 4x2 con 137 mil km, cuatro cauchos nuevos y buena pintura. Mantiene su tapicería original en muy buen estado. Título 2–1.',
@@ -76,6 +81,7 @@ const vehicles = [
     name: 'Ford Explorer Limited 2016',
     image: 'explorer-limited-2016.jpg',
     year: 2016,
+    kilometers: 165000,
     price: 27000,
     description:
       'SUV amplia y potente con 165 mil km. Su versión Limited ofrece comodidad, espacio para la familia y un equipamiento completo.',
@@ -86,6 +92,7 @@ const vehicles = [
     name: 'JAC T8 2026',
     image: 'jac-t8-2026.jpg',
     year: 2026,
+    kilometers: 0,
     price: 37000,
     description:
       'Pickup 0 km, fuerte y completa de fábrica. Ofrece garantía full, interior amplio y tecnología actual para trabajo o paseo.',
@@ -98,6 +105,7 @@ const vehicles = [
     name: 'Hyundai Grand i10 2026',
     image: 'hyundai-i10-2026.jpg',
     year: 2026,
+    kilometers: 1000,
     price: 23800,
     description:
       'Con solo 1.000 km, ofrece una experiencia casi nueva, bajo consumo y facilidad para moverse y estacionar. Título 1–1 y más de un año de garantía.',
@@ -108,6 +116,7 @@ const vehicles = [
     name: 'Toyota Agya 2025',
     image: 'toyota-agya-2025.jpg',
     year: 2025,
+    kilometers: 0,
     price: 25300,
     description:
       'Compacto por fuera y cómodo por dentro, con consumo eficiente. Es blanco, está 0 km y cuenta con garantía de fábrica.',
@@ -120,6 +129,7 @@ const vehicles = [
     name: 'Hyundai Santa Fe 2017',
     image: 'santa-fe-2017.jpg',
     year: 2017,
+    kilometers: 44000,
     price: 33000,
     description:
       'De único dueño, con 44 mil km, color blanco, motor 3.3 L, seis cilindros y tracción 4x4. Está como nueva por dentro y por fuera, con equipamiento completo.',
@@ -131,6 +141,7 @@ const vehicles = [
     name: 'Toyota Hiace 2009',
     image: 'toyota-hiace-2009.jpg',
     year: 2009,
+    kilometers: 433000,
     price: 22000,
     description:
       'Van de carga con 433 mil km y motor recién hecho. Es una opción rentable y fácil de mantener, con buena reventa. Título 2–1.',
@@ -141,6 +152,7 @@ const vehicles = [
     name: 'Mitsubishi Outlander GLS 2025',
     image: 'outlander-2025.jpg',
     year: 2025,
+    kilometers: 32000,
     price: 60000,
     description:
       'SUV premium blanca, con motor 2.5 L, tres filas para siete pasajeros y 32 mil km. Es de único dueño y combina comodidad, seguridad y tecnología actual.',
@@ -249,6 +261,7 @@ const seedCar = async (vehicle, assetId) => {
     title: vehicle.name,
     name: vehicle.name,
     year: vehicle.year,
+    kilometers: vehicle.kilometers,
     price: vehicle.price,
     description: vehicle.description,
     images: [

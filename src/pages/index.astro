@@ -33,6 +33,7 @@ type Car = {
   status: 'available' | 'reserved';
   featured?: boolean;
   orderRank?: string;
+  kilometers?: number;
   badge?: string;
   whatsappMessage?: string;
 };
@@ -121,7 +122,7 @@ const [siteSettings, homePage, carsFromCms] = await Promise.all([
       _id, _createdAt, name, title, year, price, description,
       image{..., ${imageFields}},
       images[]{..., ${imageFields}},
-      status, featured, orderRank, badge, whatsappMessage
+      status, featured, orderRank, kilometers, badge, whatsappMessage
     }`),
 ]);
 
@@ -176,7 +177,10 @@ const vehicleImages = (car: Car): SanityImage[] => {
   return car.image ? [car.image] : [];
 };
 
-const isZeroKm = (car: Car) => /0\s*km/i.test(car.badge ?? '');
+const isZeroKm = (car: Car) => {
+  if (typeof car.kilometers === 'number') return car.kilometers === 0;
+  return /0\s*km/i.test(car.badge ?? '');
+};
 const catalogFilterTags = (car: Car) => {
   const tags: string[] = [];
   if (car.status === 'reserved') tags.push('reserved');
