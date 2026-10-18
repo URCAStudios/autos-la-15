@@ -1,10 +1,13 @@
+import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list';
 import { defineField, defineType } from 'sanity';
 
 export const car = defineType({
   name: 'car',
   title: 'Vehículo',
   type: 'document',
+  orderings: [orderRankOrdering],
   fields: [
+    orderRankField({ type: 'car' }),
     defineField({ name: 'title', title: 'Título', type: 'string', validation: (Rule) => Rule.required() }),
     defineField({ name: 'name', title: 'Nombre del vehículo', type: 'string', validation: (Rule) => Rule.required() }),
     defineField({ name: 'year', title: 'Año', type: 'number', validation: (Rule) => Rule.required().integer().min(1900) }),
@@ -48,13 +51,6 @@ export const car = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({ name: 'featured', title: 'Destacado', type: 'boolean', initialValue: false }),
-    defineField({
-      name: 'order',
-      title: 'Orden en presentación',
-      type: 'number',
-      description: 'Número más bajo aparece primero en el carrusel. Si está vacío, el vehículo va al final.',
-      validation: (Rule) => Rule.integer().min(0),
-    }),
     defineField({ name: 'badge', title: 'Insignia', type: 'string', description: 'Texto breve como 0 KM o Único dueño.' }),
     defineField({ name: 'whatsappMessage', title: 'Mensaje de WhatsApp', type: 'text', rows: 3 }),
     defineField({ name: 'model3d', title: 'Modelo 3D', type: 'file', options: { accept: '.glb,.gltf,model/gltf-binary,model/gltf+json' } }),

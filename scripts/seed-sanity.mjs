@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createClient } from '@sanity/client';
+import { assignCarPresentationOrder } from './lib/assign-car-presentation-order.mjs';
 
 const requiredEnv = ['SANITY_PROJECT_ID', 'SANITY_TOKEN', 'SANITY_DATASET', 'SANITY_API_VERSION'];
 
@@ -533,6 +534,9 @@ const main = async () => {
     heroAssetId: editorialAssetIds.heroImage,
     historyAssetId: editorialAssetIds.historyImage,
   });
+
+  const orderedCars = await assignCarPresentationOrder(client);
+  console.log(`Presentation order assigned for ${orderedCars} vehicle(s).`);
 
   console.log(`Seed complete: ${loadedVehicles.length} cars, 1 siteSettings document, 1 homePage document.`);
   const totalImages = loadedVehicles.length + loadedEditorialAssets.length;

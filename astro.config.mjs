@@ -140,6 +140,8 @@ export default defineConfig({
         'refractor/jsx',
         'refractor/typescript',
         '@sanity/prism-groq',
+        '@sanity/orderable-document-list',
+        'lexorank',
       ],
     },
   },
