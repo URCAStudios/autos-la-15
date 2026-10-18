@@ -11,6 +11,13 @@ export const car = defineType({
     defineField({ name: 'title', title: 'Título', type: 'string', validation: (Rule) => Rule.required() }),
     defineField({ name: 'name', title: 'Nombre del vehículo', type: 'string', validation: (Rule) => Rule.required() }),
     defineField({ name: 'year', title: 'Año', type: 'number', validation: (Rule) => Rule.required().integer().min(1900) }),
+    defineField({
+      name: 'kilometers',
+      title: 'Kilómetros',
+      type: 'number',
+      description: 'Kilometraje del vehículo. Usa 0 para vehículos 0 KM; alimenta el filtro del catálogo.',
+      validation: (Rule) => Rule.required().integer().min(0),
+    }),
     defineField({ name: 'price', title: 'Precio', type: 'number', validation: (Rule) => Rule.required().positive() }),
     defineField({ name: 'description', title: 'Descripción', type: 'text', rows: 5 }),
     defineField({
