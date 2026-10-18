@@ -32,10 +32,20 @@ type Car = {
   images?: SanityImage[];
   status: 'available' | 'reserved';
   featured?: boolean;
-  order?: number;
+  orderRank?: string;
   badge?: string;
   whatsappMessage?: string;
 };
+
+/** Same lexicographic sort as Sanity Studio orderable vehicle list (`orderRank` only). */
+const sortCarsForPresentation = (list: Car[]) =>
+  [...list].sort((a, b) => {
+    const rankA = a.orderRank?.trim() || '\uffff';
+    const rankB = b.orderRank?.trim() || '\uffff';
+    const byRank = rankA.localeCompare(rankB);
+    if (byRank !== 0) return byRank;
+    return a._id.localeCompare(b._id);
+  });
 
 type Location = { city?: string; address?: string; mapUrl?: string };
 type Hour = { label?: string; opening?: string; closing?: string };
@@ -91,7 +101,7 @@ type HomePage = {
 
 const imageFields = `"asset": asset, alt, crop, hotspot`;
 
-const [siteSettings, homePage, cars] = await Promise.all([
+const [siteSettings, homePage, carsFromCms] = await Promise.all([
   sanityClient.fetch<SiteSettings | null>(`*[_type == "siteSettings"][0]{
     identity{ brandName, tagline, logo{..., ${imageFields}} },
     contact, hours, locations, socialLinks,
@@ -107,13 +117,15 @@ const [siteSettings, homePage, cars] = await Promise.all([
     contact
   }`),
   sanityClient.fetch<Car[]>(`*[_type == "car" && status in ["available", "reserved"]]
-    | order(coalesce(order, 9999) asc, featured desc, _createdAt asc, _id asc){
+    | order(orderRank asc, _id asc){
       _id, _createdAt, name, title, year, price, description,
       image{..., ${imageFields}},
       images[]{..., ${imageFields}},
-      status, featured, order, badge, whatsappMessage
+      status, featured, orderRank, badge, whatsappMessage
     }`),
 ]);
+
+const cars = sortCarsForPresentation(carsFromCms);
 
 const settings = siteSettings ?? {};
 const home = homePage ?? {};

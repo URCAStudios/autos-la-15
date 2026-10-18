@@ -1,5 +1,7 @@
-import { defineConfig } from 'sanity';
+import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
+import { defineConfig, type ConfigContext } from 'sanity';
 import { structureTool, type StructureBuilder } from 'sanity/structure';
+import { carDocumentNormalizationPlugin } from './src/sanity/plugins/carDocumentNormalization';
 import { schemaTypes } from './src/sanity/schemaTypes';
 
 const viteEnv = import.meta.env as Record<string, string | undefined>;
@@ -13,7 +15,7 @@ if (!projectId) {
 
 const singletonIds = new Set(['siteSettings', 'homePage']);
 
-const structure = (S: StructureBuilder) =>
+const structure = (S: StructureBuilder, context: ConfigContext) =>
   S.list()
     .title('Contenido')
     .items([
@@ -26,7 +28,16 @@ const structure = (S: StructureBuilder) =>
         .id('homePage')
         .child(S.document().schemaType('homePage').documentId('homePage')),
       S.divider(),
-      ...S.documentTypeListItems().filter((item) => !singletonIds.has(item.getId() ?? '')),
+      orderableDocumentListDeskItem({
+        type: 'car',
+        title: 'Vehículos',
+        S,
+        context,
+      }),
+      ...S.documentTypeListItems().filter((item) => {
+        const id = item.getId() ?? '';
+        return !singletonIds.has(id) && id !== 'car';
+      }),
     ]);
 
 export default defineConfig({
@@ -34,7 +45,7 @@ export default defineConfig({
   title: 'Autos La 15',
   projectId,
   dataset,
-  plugins: [structureTool({ structure })],
+  plugins: [structureTool({ structure }), carDocumentNormalizationPlugin()],
   schema: {
     types: schemaTypes,
   },
