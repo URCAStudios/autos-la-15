@@ -66,6 +66,14 @@ Requiere `PAGES_DEPLOY_HOOK_URL` en `.env` (URL del deploy hook de **Pages**, ra
 | `npm run check` | `astro check` |
 | `npm run build` | Salida estática `dist/` |
 | `npm run seed:sanity` | Semilla CMS (`SANITY_TOKEN`) |
+| `npm run migrate:car-order-rank` | Migra `order` legado → `orderRank` (una vez tras deploy; requiere `SANITY_TOKEN`) |
+| `npm run migrate:car-images` | Migra campo `image` → array `images` |
+
+### Orden del catálogo (Studio)
+
+Los vehículos se ordenan en **Studio → Vehículos** (drag-and-drop). El carrusel de la home usa el mismo `orderRank`.
+
+Tras el primer deploy de esta funcionalidad, ejecutar `npm run migrate:car-order-rank` (o abrir `/studio` con sesión de editor para que el plugin normalice datos legados). Publicar borradores pendientes si el estado lo indica.
 
 ## Rama y despliegue
 
