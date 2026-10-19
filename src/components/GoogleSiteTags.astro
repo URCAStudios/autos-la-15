@@ -1,0 +1,26 @@
+---
+/**
+ * GA4 + Search Console HTML-tag verification (optional env vars at build time).
+ * Set on Cloudflare Pages Production (and Preview if you want analytics there).
+ */
+const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID?.trim();
+const gscVerification = import.meta.env.PUBLIC_GSC_VERIFICATION?.trim();
+---
+
+{gscVerification && <meta name="google-site-verification" content={gscVerification} />}
+
+{
+  gaId && (
+    <>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+      <script is:inline define:vars={{ gaId }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', gaId);
+      </script>
+    </>
+  )
+}

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guía Google Analytics y Search Console — Autos La 15</title>
+  <style>
+    :root {
+      --bg-color: #121212;
+      --card-bg: #1a1a1a;
+      --card-border: #2a2a2a;
+      --accent-green: #ccff00;
+      --text-main: #f0f0f0;
+      --text-muted: #a0a0a0;
+      --line-color: #262626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    @page { size: A4; margin: 0; }
+    html {
+      background: var(--bg-color);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    body {
+      background: var(--bg-color);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.5;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .container {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 32px 48px 40px;
+      background: var(--bg-color);
+    }
+    .subtitle-top {
+      color: var(--accent-green);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #fff;
+      line-height: 1.15;
+    }
+    .intro-text {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line-color);
+    }
+    .intro-text strong { color: var(--text-main); }
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 28px 0 10px;
+      color: #fff;
+      page-break-after: avoid;
+    }
+    h3 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin: 18px 0 8px;
+      color: #fff;
+      page-break-after: avoid;
+    }
+    p { margin: 0 0 10px; color: var(--text-main); font-size: 0.92rem; }
+    strong { font-weight: 600; color: var(--text-main); }
+    code {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.88em;
+      color: var(--accent-green);
+    }
+    ul, ol { margin: 0 0 12px; padding-left: 22px; font-size: 0.92rem; }
+    li { margin-bottom: 6px; color: var(--text-main); }
+    li::marker { color: var(--accent-green); }
+    a { color: var(--accent-green); word-break: break-all; }
+    .callout {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-left: 4px solid var(--accent-green);
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin: 16px 0 22px;
+      page-break-inside: avoid;
+    }
+    .callout-label {
+      display: block;
+      color: var(--accent-green);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+    }
+    .callout p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+    .callout p strong { color: var(--text-main); }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 16px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      margin: 16px 0 22px;
+      page-break-inside: avoid;
+    }
+    .meta-item span {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .meta-item strong {
+      color: var(--accent-green);
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 18px;
+      font-size: 0.88rem;
+      page-break-inside: avoid;
+      border-top: 1px solid var(--line-color);
+    }
+    th, td {
+      padding: 11px 0;
+      text-align: left;
+      vertical-align: top;
+      border: none;
+      border-bottom: 1px solid var(--line-color);
+    }
+    th { color: var(--accent-green); font-weight: 600; }
+    td { color: var(--text-muted); }
+    td strong { color: var(--text-main); }
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 16px;
+      border-top: 1px solid var(--line-color);
+    }
+    .checklist li {
+      padding: 11px 0 11px 26px;
+      position: relative;
+      border-bottom: 1px solid var(--line-color);
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+    .checklist li::before {
+      content: "☐";
+      position: absolute;
+      left: 0;
+      color: var(--accent-green);
+      font-size: 12pt;
+    }
+    .note { font-size: 0.82rem; color: var(--text-muted); }
+    .page-break { page-break-before: always; }
+    .doc-footer {
+      margin-top: 36px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line-color);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    @media print {
+      html, body { background: var(--bg-color); }
+      .container { padding: 28px 44px 36px; }
+      a { color: var(--accent-green); text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="subtitle-top">Autos La 15 · Medición y búsqueda en Google</div>
+    <h1>Crear sus cuentas de Google y dar acceso al desarrollador</h1>
+    <p class="intro-text"><strong>Autos La 15</strong> — unos <strong>20–30 minutos</strong>, una sola vez. Usted crea las herramientas de Google en <strong>su</strong> cuenta (correo del negocio). El desarrollador conecta el sitio y termina la configuración técnica después.</p>
+
+    <div class="callout">
+      <span class="callout-label">Solo lo que usted debe hacer</span>
+      <p>Esta guía <strong>no</strong> pide programar ni tocar Cloudflare. Usted: <strong>crear</strong> Google Analytics y Google Search Console en su Gmail, <strong>copiar</strong> dos datos para el desarrollador e <strong>invitarlo</strong> con permiso de administrador. El sitio <strong>autosla15.com</strong> y el panel de edición (<strong>/studio</strong>) siguen igual.</p>
+    </div>
+
+    <h2>1. Qué es esto y por qué en su cuenta</h2>
+    <table>
+      <thead><tr><th>Herramienta</th><th>Para qué sirve</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Google Analytics</strong></td>
+          <td>Ver cuántas personas visitan <strong>autosla15.com</strong> y desde dónde (estadísticas del negocio).</td>
+        </tr>
+        <tr>
+          <td><strong>Google Search Console</strong></td>
+          <td>Ver si Google encuentra su sitio en búsquedas y avisos si algo falla.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="note">El desarrollador <strong>no puede</strong> crear estas cuentas a su nombre: deben quedar en el <strong>correo Google del negocio</strong> (propiedad de los datos).</p>
+
+    <h2>2. Antes de empezar</h2>
+    <table>
+      <thead><tr><th>Qué necesita</th><th>Notas</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Cuenta de Google (Gmail)</strong></td>
+          <td>La del negocio o la que usarán para administrar el sitio. Si no tiene, cree una en <a href="https://accounts.google.com/signup">accounts.google.com/signup</a>.</td>
+        </tr>
+        <tr>
+          <td><strong>Navegador</strong></td>
+          <td>Chrome, Edge o Safari en computadora (más cómodo que el celular).</td>
+        </tr>
+        <tr>
+          <td><strong>Correo del desarrollador</strong></td>
+          <td>Para invitarlo y enviarle el código de medición (abajo).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span>Correo del desarrollador (invitar como Administrador / Permiso completo)</span>
+        <strong>furdac14@gmail.com</strong>
+      </div>
+    </div>
+
+    <h2>3. Google Analytics 4 (estadísticas del sitio)</h2>
+    <p>Entre con <strong>su</strong> Gmail en <a href="https://analytics.google.com">analytics.google.com</a>.</p>
+
+    <h3>Paso A — Crear la propiedad</h3>
+    <ol>
+      <li>Si es la primera vez: siga el asistente <strong>Crear cuenta</strong> → nombre de la cuenta, por ejemplo <strong>Autos La 15</strong>.</li>
+      <li>Cree una <strong>propiedad</strong> (también puede llamarla <strong>Autos La 15</strong>).</li>
+      <li>Zona horaria: la de Venezuela. Moneda: la que use el negocio.</li>
+      <li>Detalles del negocio: elija categoría <strong>Automóviles</strong> (o similar) y tamaño acorde.</li>
+      <li>Objetivos: puede marcar <strong>Obtener informes básicos</strong> y continuar.</li>
+    </ol>
+
+    <h3>Paso B — Flujo de datos web</h3>
+    <ol>
+      <li>Plataforma: <strong>Web</strong>.</li>
+      <li>URL del sitio web: <code>https://autosla15.com</code></li>
+      <li>Nombre del flujo: por ejemplo <strong>Sitio autosla15.com</strong>.</li>
+      <li>Cree el flujo y anote el <strong>ID de medición</strong> (empieza por <code>G-</code>, ejemplo <code>G-XXXXXXXXXX</code>).</li>
+    </ol>
+
+    <div class="callout">
+      <span class="callout-label">Envíe al desarrollador</span>
+      <p>Copie el <strong>ID de medición</strong> (<code>G-…</code>) y envíelo por WhatsApp o correo. <strong>No</strong> necesita pegar código en el sitio usted mismo.</p>
+    </div>
+
+    <h3>Paso C — Invitar al desarrollador</h3>
+    <ol>
+      <li>En Analytics, abra <strong>Administración</strong> (engranaje abajo a la izquierda).</li>
+      <li>En la columna <strong>Propiedad</strong>, elija <strong>Acceso a la propiedad</strong> (o <strong>Administración de usuarios</strong>).</li>
+      <li>Pulse <strong>+</strong> → <strong>Añadir usuarios</strong>.</li>
+      <li>Correo: <strong>furdac14@gmail.com</strong></li>
+      <li>Rol: <strong>Administrador</strong>.</li>
+      <li>Desmarque “Notificar al usuario por correo” si prefiere avisarle usted por WhatsApp; o déjelo marcado para que Google le envíe la invitación.</li>
+      <li>Confirme <strong>Añadir</strong>.</li>
+    </ol>
+    <p><strong>Listo cuando:</strong> el desarrollador aparece en la lista de usuarios de la propiedad.</p>
+
+    <div class="page-break"></div>
+
+    <h2>4. Google Search Console (búsqueda en Google)</h2>
+    <p>Entre con el <strong>mismo Gmail</strong> en <a href="https://search.google.com/search-console">search.google.com/search-console</a>.</p>
+
+    <h3>Paso A — Añadir la propiedad</h3>
+    <ol>
+      <li>Pulse <strong>Añadir propiedad</strong>.</li>
+      <li>Elija tipo <strong>Dominio</strong> (recomendado).</li>
+      <li>Escriba exactamente: <code>autosla15.com</code> (sin <code>https://</code> ni <code>www</code>).</li>
+      <li>Continúe hasta ver las opciones de <strong>verificación</strong>.</li>
+    </ol>
+
+    <h3>Paso B — Verificación por DNS (usted copia, el desarrollador publica el registro)</h3>
+    <ol>
+      <li>Google mostrará un registro <strong>TXT</strong> (texto largo, a veces empieza por <code>google-site-verification=</code>).</li>
+      <li><strong>Copie todo el valor</strong> que indica Google (o haga captura de pantalla legible).</li>
+      <li>Envíelo al desarrollador por WhatsApp o correo. Él lo añadirá en el DNS de Cloudflare de su cuenta.</li>
+      <li><strong>Espere</strong> a que el desarrollador le confirme que ya publicó el registro (puede tardar unos minutos).</li>
+      <li>Vuelva a Search Console y pulse <strong>Verificar</strong>.</li>
+    </ol>
+    <p class="note">No cree ni borre otros registros DNS en Cloudflare por su cuenta; solo copie el TXT y avise al desarrollador.</p>
+
+    <h3>Paso C — Invitar al desarrollador</h3>
+    <ol>
+      <li>Con la propiedad ya verificada, abra <strong>Configuración</strong> → <strong>Usuarios y permisos</strong>.</li>
+      <li><strong>Añadir usuario</strong>.</li>
+      <li>Correo: <strong>furdac14@gmail.com</strong></li>
+      <li>Permiso: <strong>Completo</strong> (Full).</li>
+      <li>Guarde.</li>
+    </ol>
+    <p><strong>Listo cuando:</strong> el desarrollador aparece en la lista de usuarios.</p>
+
+    <h2>5. Lista de comprobación final</h2>
+    <ul class="checklist">
+      <li>Propiedad de Google Analytics creada en <strong>mi</strong> cuenta</li>
+      <li>Flujo web con URL <strong>https://autosla15.com</strong></li>
+      <li>Envié el <strong>ID de medición G-…</strong> al desarrollador</li>
+      <li>Invité a <strong>furdac14@gmail.com</strong> como <strong>Administrador</strong> en Analytics</li>
+      <li>Propiedad de dominio <strong>autosla15.com</strong> en Search Console</li>
+      <li>Envié el <strong>TXT de verificación</strong> al desarrollador y pulsé <strong>Verificar</strong> cuando me lo confirmó</li>
+      <li>Invité a <strong>furdac14@gmail.com</strong> con permiso <strong>Completo</strong> en Search Console</li>
+      <li>Avisé al desarrollador que terminé esta guía</li>
+    </ul>
+
+    <h2>6. Lo que hará el desarrollador (usted no tiene que hacerlo)</h2>
+    <p class="note">Después de su aviso y de recibir el <code>G-…</code> y el TXT:</p>
+    <ul>
+      <li>Conectar la medición en el sitio <strong>autosla15.com</strong> (hosting Cloudflare).</li>
+      <li>Añadir el registro TXT en el DNS de su cuenta Cloudflare.</li>
+      <li>Enviar el mapa del sitio a Google, solicitar indexación y comprobar que todo funciona.</li>
+      <li>Vincular Analytics y Search Console si hace falta.</li>
+    </ul>
+
+    <h2>7. Preguntas frecuentes</h2>
+    <p><strong>¿El sitio deja de funcionar si no hago esto?</strong><br />
+    No. La página y el panel <strong>/studio</strong> siguen igual; esto es para estadísticas y búsqueda en Google.</p>
+    <p><strong>¿Debo pagar algo a Google?</strong><br />
+    Analytics y Search Console son <strong>gratuitos</strong> en este uso habitual.</p>
+    <p><strong>¿Puedo usar el Gmail personal del desarrollador como dueño?</strong><br />
+    No se recomienda; los informes deben quedar en <strong>su</strong> cuenta del negocio (usted lo invita como administrador).</p>
+    <p><strong>¿Algo salió mal?</strong><br />
+    Tome una <strong>captura de pantalla</strong> y envíela al desarrollador. No elimine la propiedad ni cambie permisos sin avisar.</p>
+
+    <p class="doc-footer">Autos La 15 · Google Analytics y Search Console · Octubre 2026</p>
+
+  </div>
+</body>
+</html>

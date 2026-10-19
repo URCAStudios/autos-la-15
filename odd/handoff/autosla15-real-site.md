@@ -50,6 +50,23 @@ Los botones verdes del sitio usan los números y mensajes que configure en el pa
 
 ---
 
+## Google Analytics y Search Console (cuentas suyas)
+
+Para ver **cuántas personas visitan** autosla15.com y cómo aparece el sitio en **búsquedas de Google**, las herramientas deben crearse en **su cuenta de Google (Gmail del negocio)**, no en la del desarrollador. El sitio y el panel `/studio` **siguen funcionando** aunque esto aún no esté hecho.
+
+| Herramienta | Para qué sirve | Dónde entra usted |
+|-------------|----------------|-------------------|
+| **Google Analytics 4** | Estadísticas de visitas al sitio | [analytics.google.com](https://analytics.google.com) |
+| **Google Search Console** | Avisos y rendimiento en Google Search | [search.google.com/search-console](https://search.google.com/search-console) |
+
+**Guía paso a paso (PDF):** pida al desarrollador el archivo **`Google-Autos-La-15-Guia-Analytics-Search-Cliente.pdf`** (también en el repositorio: `odd/handoff/`). Ahí se explica solo lo que **usted** debe hacer: crear las propiedades, enviar el código **G-…** al desarrollador, copiar el **TXT** de verificación de Search Console e **invitar** al desarrollador (`furdac14@gmail.com`) como administrador en Analytics y con permiso completo en Search Console.
+
+**Lo que hace el desarrollador después** (usted no tiene que hacerlo): conectar la medición en el hosting Cloudflare, publicar el registro DNS del TXT, enviar el mapa del sitio a Google y comprobar que todo funciona.
+
+**Orden sugerido:** complete la guía de Google **antes o junto** con la entrega final del sitio, si quiere que las estadísticas empiecen desde el lanzamiento. Si ya recibió la guía principal de este documento, puede usar el sitio y el panel mientras termina Google.
+
+---
+
 ## Si algo no funciona
 
 | Situación | Qué hacer |
