@@ -13,7 +13,7 @@ if (!projectId) {
   throw new Error('SANITY_PROJECT_ID is required to load Sanity Studio.');
 }
 
-const singletonIds = new Set(['siteSettings', 'homePage']);
+const singletonIds = new Set(['siteSettings', 'homePage', 'vehiclePage']);
 
 const structure = (S: StructureBuilder, context: ConfigContext) =>
   S.list()
@@ -27,6 +27,10 @@ const structure = (S: StructureBuilder, context: ConfigContext) =>
         .title('Página: Inicio')
         .id('homePage')
         .child(S.document().schemaType('homePage').documentId('homePage')),
+      S.listItem()
+        .title('Página: Vehículo')
+        .id('vehiclePage')
+        .child(S.document().schemaType('vehiclePage').documentId('vehiclePage')),
       S.divider(),
       orderableDocumentListDeskItem({
         type: 'car',

@@ -4,16 +4,21 @@
  * Usage: node --env-file=.env scripts/sync-cms-webhook-filter.mjs
  */
 const projectId = process.env.SANITY_PROJECT_ID;
-const token = process.env.SANITY_TOKEN;
+const token = process.env.SANITY_AUTH_TOKEN?.trim() || process.env.SANITY_TOKEN?.trim();
 const hookName = 'Production rebuild (CMS publish)';
-const documentFilter = '_type in ["car", "siteSettings", "homePage"]';
+const documentFilter = '_type in ["car", "siteSettings", "homePage", "vehiclePage"]';
 
-const required = ['SANITY_PROJECT_ID', 'SANITY_TOKEN'];
+const required = ['SANITY_PROJECT_ID'];
 for (const key of required) {
   if (!process.env[key]?.trim()) {
     console.error(`Missing ${key}`);
     process.exit(1);
   }
+}
+
+if (!token) {
+  console.error('Missing SANITY_AUTH_TOKEN or SANITY_TOKEN');
+  process.exit(1);
 }
 
 const hooksApiVersion = process.env.SANITY_HOOKS_API_VERSION ?? 'v2021-06-07';

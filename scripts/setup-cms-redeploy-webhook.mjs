@@ -18,7 +18,7 @@ const token = process.env.SANITY_TOKEN;
 const deployHookUrl = process.env.PAGES_DEPLOY_HOOK_URL?.trim();
 const hookName = 'Production rebuild (CMS publish)';
 const legacyHookNamesToDelete = ['Vercel production rebuild (CMS publish)'];
-const documentFilter = '_type in ["car", "siteSettings", "homePage"]';
+const documentFilter = '_type in ["car", "siteSettings", "homePage", "vehiclePage"]';
 
 const required = ['SANITY_PROJECT_ID', 'SANITY_TOKEN'];
 for (const key of required) {
@@ -65,7 +65,7 @@ const webhookBody = {
   name: hookName,
   url: deployHookUrl,
   dataset: process.env.SANITY_DATASET ?? 'production',
-  description: 'Triggers a production rebuild when car, siteSettings, or homePage documents are published.',
+  description: 'Triggers a production rebuild when car, siteSettings, homePage, or vehiclePage documents are published.',
   type: 'document',
   apiVersion: hooksApiVersion,
   rule: {
