@@ -76,6 +76,18 @@ export const assignSlugs = <T extends VehicleIdentity>(cars: T[]): Array<T & { s
   });
 };
 
+export type VehicleWithOrderRank = VehicleIdentity & { orderRank?: string };
+
+/** Same lexicographic sort as homepage catalog and Sanity Studio list. */
+export const sortCarsForPresentation = <T extends VehicleWithOrderRank>(list: T[]) =>
+  [...list].sort((a, b) => {
+    const rankA = a.orderRank?.trim() || '\uffff';
+    const rankB = b.orderRank?.trim() || '\uffff';
+    const byRank = rankA.localeCompare(rankB);
+    if (byRank !== 0) return byRank;
+    return a._id.localeCompare(b._id);
+  });
+
 export const statusLabel = (status: string, labels: StatusLabels) => {
   if (status === 'reserved') return labels.reserved;
   if (status === 'sold') return labels.sold;

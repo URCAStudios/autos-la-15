@@ -1,7 +1,7 @@
 ---
 import { sanityClient } from 'sanity:client';
 import { createSanityImageBuilder, type SanityImage } from '../../lib/sanityImage';
-import { assignSlugs, descriptionFacts, statusLabel } from '../../lib/vehicles';
+import { assignSlugs, descriptionFacts, sortCarsForPresentation, statusLabel } from '../../lib/vehicles';
 import { resolveVehiclePageCopy } from '../../lib/vehiclePageCopy';
 import '../../styles/global.css';
 import '../../styles/vehicle.css';
@@ -37,6 +37,7 @@ type CarRecord = {
   images?: SanityImage[];
   status: string;
   featured?: boolean;
+  orderRank?: string;
   badge?: string;
   whatsappMessage?: string;
   model3d?: { asset?: { url?: string } };
@@ -45,14 +46,16 @@ type CarRecord = {
 export async function getStaticPaths() {
   const imageFields = `"asset": asset, alt, crop, hotspot`;
   const cars = assignSlugs(
-    await sanityClient.fetch<CarRecord[]>(`*[_type == "car" && status in ["available", "reserved"]]
-      | order(coalesce(order, 9999) asc, featured desc, _createdAt asc, _id asc){
-        _id, name, title, year, price, description,
-        image{..., ${imageFields}},
-        images[]{..., ${imageFields}},
-        status, featured, badge, whatsappMessage,
-        model3d{ asset->{ url } }
-      }`),
+    sortCarsForPresentation(
+      await sanityClient.fetch<CarRecord[]>(`*[_type == "car" && status in ["available", "reserved"]]
+        | order(orderRank asc, _id asc){
+          _id, name, title, year, price, description,
+          image{..., ${imageFields}},
+          images[]{..., ${imageFields}},
+          status, featured, orderRank, badge, whatsappMessage,
+          model3d{ asset->{ url } }
+        }`),
+    ),
   );
   return cars.map((car) => ({
     params: { slug: car.slug },

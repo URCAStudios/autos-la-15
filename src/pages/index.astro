@@ -4,7 +4,7 @@ import fallbackHero from '../../assets/hero-image-large.jpg';
 import fallbackHistory from '../../assets/who-are-we-image.jpg';
 import GoogleSiteTags from '../components/GoogleSiteTags.astro';
 import { createSanityImageBuilder, type SanityImage } from '../lib/sanityImage';
-import { assignSlugs } from '../lib/vehicles';
+import { assignSlugs, sortCarsForPresentation } from '../lib/vehicles';
 import { vehiclePageCopy } from '../lib/vehiclePageCopy';
 import '../styles/global.css';
 
@@ -40,16 +40,6 @@ type Car = {
   badge?: string;
   whatsappMessage?: string;
 };
-
-/** Same lexicographic sort as Sanity Studio orderable vehicle list (`orderRank` only). */
-const sortCarsForPresentation = (list: Car[]) =>
-  [...list].sort((a, b) => {
-    const rankA = a.orderRank?.trim() || '\uffff';
-    const rankB = b.orderRank?.trim() || '\uffff';
-    const byRank = rankA.localeCompare(rankB);
-    if (byRank !== 0) return byRank;
-    return a._id.localeCompare(b._id);
-  });
 
 type Location = { city?: string; address?: string; mapUrl?: string };
 type Hour = { label?: string; opening?: string; closing?: string };
@@ -130,13 +120,9 @@ const [siteSettings, homePage, carsFromCms, vehiclePage] = await Promise.all([
   sanityClient.fetch<{ detailsLinkLabel?: string } | null>(`*[_id == "vehiclePage"][0]{ detailsLinkLabel }`),
 ]);
 
-<<<<<<< HEAD
 const cars = assignSlugs(sortCarsForPresentation(carsFromCms));
-
-=======
-const cars = assignSlugs(fetchedCars);
 const detailsLinkLabel = vehiclePage?.detailsLinkLabel?.trim() || vehiclePageCopy.detailsLinkLabel;
->>>>>>> 8ee9f85 (feat(catalog): vehicle detail pages with CMS copy and layout polish)
+
 const settings = siteSettings ?? {};
 const home = homePage ?? {};
 
