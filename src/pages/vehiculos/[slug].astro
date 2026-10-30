@@ -2,6 +2,7 @@
 import { sanityClient } from 'sanity:client';
 import { createSanityImageBuilder, type SanityImage } from '../../lib/sanityImage';
 import { assignSlugs, descriptionFacts, statusLabel } from '../../lib/vehicles';
+import { resolveVehiclePageCopy } from '../../lib/vehiclePageCopy';
 import '../../styles/global.css';
 import '../../styles/vehicle.css';
 
@@ -61,11 +62,16 @@ export async function getStaticPaths() {
 
 const { car, cars } = Astro.props;
 const imageFields = `"asset": asset, alt, crop, hotspot`;
-const settings = (await sanityClient.fetch<SiteSettings | null>(`*[_type == "siteSettings"][0]{
-  identity{ brandName, tagline, logo{..., ${imageFields}} },
-  contact, hours, locations, socialLinks,
-  navigation, footer, messaging, seo
-}`)) ?? {};
+const [settingsDoc, vehiclePageDoc] = await Promise.all([
+  sanityClient.fetch<SiteSettings | null>(`*[_type == "siteSettings"][0]{
+    identity{ brandName, tagline, logo{..., ${imageFields}} },
+    contact, hours, locations, socialLinks,
+    navigation, footer, messaging, seo
+  }`),
+  sanityClient.fetch<Parameters<typeof resolveVehiclePageCopy>[0]>(`*[_id == "vehiclePage"][0]`),
+]);
+const settings = settingsDoc ?? {};
+const copy = resolveVehiclePageCopy(vehiclePageDoc);
 
 const config = sanityClient.config();
 if (!config.projectId || !config.dataset) throw new Error('Sanity project configuration is required to build image URLs.');
@@ -125,17 +131,19 @@ const canonicalUrl = siteUrl ? new URL(`/vehiculos/${car.slug}`, siteUrl).toStri
 const description = car.description?.trim()
   || `${car.name} por ${formatPrice(car.price)}. Disponible en ${brandName}.`;
 const rows: { label: string; value: string; href?: string }[] = [
-  { label: 'Nombre', value: car.name },
-  { label: 'Año', value: String(car.year) },
-  { label: 'Precio', value: formatPrice(car.price) },
-  { label: 'Estado', value: statusLabel(car.status) },
+  { label: copy.recordLabels.name, value: car.name },
+  { label: copy.recordLabels.year, value: String(car.year) },
+  { label: copy.recordLabels.price, value: formatPrice(car.price) },
+  { label: copy.recordLabels.status, value: statusLabel(car.status, copy.statusLabels) },
 ];
-if (car.badge?.trim()) rows.push({ label: 'Insignia', value: car.badge.trim() });
-if (car.featured) rows.push({ label: 'Destacado', value: 'Sí' });
-rows.push({ label: 'Fotos', value: String(photos.length) });
+if (car.badge?.trim()) rows.push({ label: copy.recordLabels.badge, value: car.badge.trim() });
+if (car.featured) rows.push({ label: copy.recordLabels.featured, value: copy.featuredValue });
+rows.push({ label: copy.recordLabels.photos, value: String(photos.length) });
 rows.push(modelUrl
-  ? { label: 'Modelo 3D', value: 'Abrir modelo', href: modelUrl }
-  : { label: 'Modelo 3D', value: 'No incluido' });
+  ? { label: copy.recordLabels.model3d, value: copy.modelIncluded, href: modelUrl }
+  : { label: copy.recordLabels.model3d, value: copy.modelMissing });
+const visitLead = city ? fillTemplate(copy.visitLead, { vehicle: car.name, city }) : '';
+const mapLabel = fillTemplate(city ? copy.mapLink : copy.mapLinkWithoutCity, { city: city ?? '' });
 
 const hourLine = (hour: Hour) => {
   const line = hour.opening && hour.closing ? `${hour.label}, ${hour.opening} a ${hour.closing}` : (hour.label ?? '');
@@ -216,7 +224,7 @@ const structuredData = {
     <main id="main-content">
       <article class="container">
         <nav class="crumbs" aria-label="Migas">
-          <a href="/#catalogo">Vehículos</a>
+          <a href="/#catalogo">{copy.breadcrumbLabel}</a>
           <span aria-hidden="true">/</span>
           <span aria-current="page">{car.name}</span>
         </nav>
@@ -224,14 +232,14 @@ const structuredData = {
           {photos.length > 0 && (
             <div class="gallery" data-vehicle-gallery>
               <div class="stage">
-                <button class="stage-open" type="button" data-stage-open aria-label="Ampliar foto">
+                <button class="stage-open" type="button" data-stage-open aria-label={copy.enlargePhoto}>
                   <img data-stage-current src={photos[0].src} alt={photos[0].alt} width="1600" height="1600" />
                 </button>
                 {hasGallery && <p class="stage-count" data-stage-status>1 de {photos.length}</p>}
                 {hasGallery && (
                   <>
-                    <button class="stage-arrow stage-arrow-prev" type="button" data-stage-prev aria-label="Foto anterior">‹</button>
-                    <button class="stage-arrow stage-arrow-next" type="button" data-stage-next aria-label="Foto siguiente">›</button>
+                    <button class="stage-arrow stage-arrow-prev" type="button" data-stage-prev aria-label={copy.previousPhoto}>‹</button>
+                    <button class="stage-arrow stage-arrow-next" type="button" data-stage-next aria-label={copy.nextPhoto}>›</button>
                   </>
                 )}
               </div>
@@ -239,7 +247,7 @@ const structuredData = {
                 <ul class="film" role="tablist" aria-label={`Fotos de ${car.name}`}>
                   {photos.map((photo, index) => (
                     <li>
-                      <button class:list={[{ 'is-active': index === 0 }]} type="button" role="tab" data-stage-thumb={index} data-alt={photo.alt} aria-label={`Foto ${index + 1}: ${photo.alt}`} aria-selected={index === 0 ? 'true' : 'false'}>
+                      <button class:list={[{ 'is-active': index === 0 }]} type="button" role="tab" data-stage-thumb={index} data-alt={photo.alt} aria-label={`${fillTemplate(copy.photoLabel, { number: String(index + 1) })}: ${photo.alt}`} aria-selected={index === 0 ? 'true' : 'false'}>
                         <img src={photo.thumb} alt="" width="240" height="240" />
                       </button>
                     </li>
@@ -250,22 +258,22 @@ const structuredData = {
           )}
           <div class="sheet">
             <div class="chip-row">
-              <span class="chip">{statusLabel(car.status)}</span>
+              <span class="chip">{statusLabel(car.status, copy.statusLabels)}</span>
               {car.badge?.trim() && <span class="chip chip-badge">{car.badge.trim()}</span>}
             </div>
             <h1 tabindex="-1">{car.name}</h1>
             <p class="price">{formatPrice(car.price)}</p>
             <div class="actions">
-              <a class="btn btn-primary" href={consultHref} target="_blank" rel="noopener">Consultar vehículo</a>
-              <a class="btn btn-ghost" href="#visita">Agendar visita</a>
+              <a class="btn btn-primary" href={consultHref} target="_blank" rel="noopener">{copy.primaryButton}</a>
+              <a class="btn btn-ghost" href="#visita">{copy.secondaryButton}</a>
             </div>
             {facts.length > 0 && (
               <>
-                <h2 class="visually-hidden">Datos en corto</h2>
+                <h2 class="visually-hidden">{copy.factsTitle}</h2>
                 <dl class="facts">
                   {facts.map((fact) => (
                     <div>
-                      <dt>{fact.label}</dt>
+                      <dt>{copy.factLabels[fact.key]}</dt>
                       <dd>{fact.value}</dd>
                     </div>
                   ))}
@@ -274,35 +282,34 @@ const structuredData = {
             )}
           </div>
         </div>
-        {car.description?.trim() && (
-          <section class="story" aria-labelledby="description-title">
-            <div class="story-grid">
-              <h2 id="description-title">Descripción</h2>
-              <p>{car.description.trim()}</p>
-            </div>
-          </section>
-        )}
+        <section class="detail-panels" aria-label="Descripción y datos del anuncio">
+          <div class="detail-panels-grid">
+            {car.description?.trim() && (
+              <section class="detail-panel story-panel" aria-labelledby="description-title">
+                <h2 id="description-title">{copy.descriptionTitle}</h2>
+                <p>{car.description.trim()}</p>
+              </section>
+            )}
+            <section class="detail-panel record-panel" aria-labelledby="record-title">
+              <h2 id="record-title">{copy.recordTitle}</h2>
+              <dl class="record-table">
+                {rows.map((row) => (
+                  <div class="record-row">
+                    <dt>{row.label}</dt>
+                    <dd>{row.href ? <a href={row.href} target="_blank" rel="noopener">{row.value}</a> : row.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          </div>
+        </section>
       </article>
-
-      <section class="record" aria-labelledby="record-title">
-        <div class="container">
-          <h2 id="record-title">Datos del anuncio</h2>
-          <dl class="record-table">
-            {rows.map((row) => (
-              <div class="record-row">
-                <dt>{row.label}</dt>
-                <dd>{row.href ? <a href={row.href} target="_blank" rel="noopener">{row.value}</a> : row.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
 
       <section class="visit" id="visita" aria-labelledby="visit-title">
         <div class="container visit-grid">
           <div>
-            <h2 id="visit-title">Coordinar la visita</h2>
-            {city && <p>{car.name} se ve en {city}.</p>}
+            <h2 id="visit-title">{copy.visitTitle}</h2>
+            {visitLead && <p>{visitLead}</p>}
             {hours.map((hour) => (
               hourLine(hour) && <p>{hourLine(hour)}</p>
             ))}
@@ -316,7 +323,7 @@ const structuredData = {
               </p>
             ))}
             {firstLocation?.mapUrl && (
-              <p><a href={firstLocation.mapUrl} target="_blank" rel="noopener">Ver el mapa{city ? ` de ${city}` : ''}</a></p>
+              <p><a href={firstLocation.mapUrl} target="_blank" rel="noopener">{mapLabel}</a></p>
             )}
             {contact.email && <p><a href={`mailto:${contact.email}`}>{contact.email}</a></p>}
           </div>
@@ -326,7 +333,7 @@ const structuredData = {
       {relatedCards.length > 0 && (
         <section class="lote" id="lote" aria-labelledby="lote-title">
           <div class="container">
-            <h2 id="lote-title">Otros anuncios del lote</h2>
+            <h2 id="lote-title">{copy.relatedTitle}</h2>
             <ul class="lote-list">
               {relatedCards.map((item) => (
                 <li>
@@ -377,18 +384,18 @@ const structuredData = {
 
     <div class="dock" id="dock">
       <strong>{formatPrice(car.price)}</strong>
-      <a class="btn btn-primary" href={consultHref} target="_blank" rel="noopener">Consultar vehículo</a>
+      <a class="btn btn-primary" href={consultHref} target="_blank" rel="noopener">{copy.primaryButton}</a>
     </div>
 
     <dialog class="lightbox" id="lightbox" aria-label="Foto ampliada">
       <div class="lightbox-bar">
         <p id="lightbox-status"></p>
-        <button type="button" id="lightbox-close">Cerrar</button>
+        <button type="button" id="lightbox-close">{copy.closePhoto}</button>
       </div>
       <img id="lightbox-img" alt="" width="1600" height="1600" />
       <div class="lightbox-nav">
-        <button type="button" id="lightbox-prev">Foto anterior</button>
-        <button type="button" id="lightbox-next">Foto siguiente</button>
+        <button type="button" id="lightbox-prev">{copy.previousPhoto}</button>
+        <button type="button" id="lightbox-next">{copy.nextPhoto}</button>
       </div>
     </dialog>
 

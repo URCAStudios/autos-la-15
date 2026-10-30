@@ -5,6 +5,7 @@ import fallbackHistory from '../../assets/who-are-we-image.jpg';
 import GoogleSiteTags from '../components/GoogleSiteTags.astro';
 import { createSanityImageBuilder, type SanityImage } from '../lib/sanityImage';
 import { assignSlugs } from '../lib/vehicles';
+import { vehiclePageCopy } from '../lib/vehiclePageCopy';
 import '../styles/global.css';
 
 type Link = { label?: string; href?: string; openInNewTab?: boolean };
@@ -104,7 +105,7 @@ type HomePage = {
 
 const imageFields = `"asset": asset, alt, crop, hotspot`;
 
-const [siteSettings, homePage, carsFromCms] = await Promise.all([
+const [siteSettings, homePage, carsFromCms, vehiclePage] = await Promise.all([
   sanityClient.fetch<SiteSettings | null>(`*[_type == "siteSettings"][0]{
     identity{ brandName, tagline, logo{..., ${imageFields}} },
     contact, hours, locations, socialLinks,
@@ -126,10 +127,16 @@ const [siteSettings, homePage, carsFromCms] = await Promise.all([
       images[]{..., ${imageFields}},
       status, featured, orderRank, kilometers, badge, whatsappMessage
     }`),
+  sanityClient.fetch<{ detailsLinkLabel?: string } | null>(`*[_id == "vehiclePage"][0]{ detailsLinkLabel }`),
 ]);
 
+<<<<<<< HEAD
 const cars = assignSlugs(sortCarsForPresentation(carsFromCms));
 
+=======
+const cars = assignSlugs(fetchedCars);
+const detailsLinkLabel = vehiclePage?.detailsLinkLabel?.trim() || vehiclePageCopy.detailsLinkLabel;
+>>>>>>> 8ee9f85 (feat(catalog): vehicle detail pages with CMS copy and layout polish)
 const settings = siteSettings ?? {};
 const home = homePage ?? {};
 
@@ -495,7 +502,7 @@ const structuredData = {
                             {catalog.vehiclePrimaryButton ?? 'Consultar vehículo'}
                           </a>
                           <a class="btn vehicle-btn-secondary" href="#contacto">{catalog.vehicleSecondaryButton ?? 'Agendar visita'}</a>
-                          <a class="vehicle-card-details" href={`/vehiculos/${car.slug}`}>Ver ficha</a>
+                          <a class="vehicle-card-details" href={`/vehiculos/${car.slug}`}>{detailsLinkLabel}</a>
                         </div>
                       </div>
                     </div>

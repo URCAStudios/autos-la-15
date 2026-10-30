@@ -16,6 +16,7 @@ const summary = await client.fetch(`{
   "cars": count(*[_type == "car"]),
   "siteSettings": count(*[_type == "siteSettings"]),
   "homePage": count(*[_type == "homePage"]),
+  "vehiclePage": count(*[_type == "vehiclePage"]),
   "heroTitle": *[_type == "homePage"][0].hero.intro.title,
   "hasLogo": defined(*[_type == "siteSettings"][0].identity.logo.asset)
 }`);
