@@ -96,7 +96,7 @@ p { margin: 0 0 16px; color: var(--text-muted); }
 .hero-inner { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; min-height: 100svh; padding: clamp(88px, 12vh, 120px) 20px clamp(64px, 10vh, 88px); text-align: center; }
 .hero-content { width: min(760px, 100%); margin: 0 auto; }
 .hero .eyebrow { color: rgba(247, 248, 246, .76); }
-.hero h1 { max-width: 720px; margin: 0 auto 22px; color: var(--hero-ink); }
+.hero h1 { max-width: 720px; margin: 0 auto 22px; color: var(--hero-ink); font-size: clamp(2.4rem, 5.5vw, 5rem); }
 .hero-lead { max-width: 620px; margin: 0 auto; color: rgba(247, 248, 246, .84); font-size: clamp(1rem, 1.8vw, 1.2rem); }
 .hero-actions { display: flex; justify-content: center; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
 .hero-scroll-hint { position: absolute; bottom: 28px; left: 50%; color: rgba(247, 248, 246, .7); font-size: .72rem; letter-spacing: .08em; text-align: center; text-transform: uppercase; transform: translateX(-50%); white-space: nowrap; }
