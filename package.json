@@ -10,6 +10,7 @@
     "check": "astro check",
     "preview": "astro preview",
     "seed:sanity": "node --env-file=.env scripts/seed-sanity.mjs",
+    "seed:vehicle-page": "node --env-file=.env scripts/seed-vehicle-page.mjs",
     "migrate:car-images": "node --env-file=.env scripts/migrate-car-images.mjs",
     "migrate:car-order-rank": "node --env-file=.env scripts/migrate-car-order-rank.mjs"
   },

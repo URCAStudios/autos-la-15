@@ -101,6 +101,12 @@ const pushFact = (facts: VehicleFact[], key: FactKey, value: string) => {
   facts.push({ key, value: clean });
 };
 
+export const formatKilometers = (km: number): string => {
+  if (km === 0) return '0 km';
+  if (km >= 1_000 && km % 1_000 === 0) return `${km / 1_000} mil km`;
+  return `${new Intl.NumberFormat('es-VE', { maximumFractionDigits: 0 }).format(km)} km`;
+};
+
 /** Reads only phrases that are already in the vehicle description. */
 export const descriptionFacts = (description: string | undefined): VehicleFact[] => {
   const text = description?.trim() ?? '';
@@ -142,4 +148,21 @@ export const descriptionFacts = (description: string | undefined): VehicleFact[]
   else if (/garantía de fábrica/i.test(text)) pushFact(facts, 'warranty', 'De fábrica');
 
   return facts;
+};
+
+/** Prefer CMS kilometers over mileage/0 km parsed from the description. */
+export const vehicleFacts = (input: { description?: string; kilometers?: number }): VehicleFact[] => {
+  const parsed = descriptionFacts(input.description);
+  if (typeof input.kilometers !== 'number') return parsed;
+
+  const filtered = parsed.filter(
+    (fact) => fact.key !== 'mileage' && !(input.kilometers === 0 && fact.key === 'condition'),
+  );
+  const fromCms: VehicleFact[] = [];
+  if (input.kilometers === 0) fromCms.push({ key: 'condition', value: '0 km' });
+  fromCms.push({ key: 'mileage', value: formatKilometers(input.kilometers) });
+
+  const typeIndex = filtered.findIndex((fact) => fact.key === 'type');
+  const insertAt = typeIndex >= 0 ? typeIndex + 1 : 0;
+  return [...filtered.slice(0, insertAt), ...fromCms, ...filtered.slice(insertAt)];
 };

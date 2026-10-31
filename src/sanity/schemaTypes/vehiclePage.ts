@@ -41,6 +41,7 @@ export const vehiclePage = defineType({
       fields: [
         stringField('name', 'Nombre', vehiclePageCopy.recordLabels.name),
         stringField('year', 'Año', vehiclePageCopy.recordLabels.year),
+        stringField('kilometers', 'Kilómetros', vehiclePageCopy.recordLabels.kilometers),
         stringField('price', 'Precio', vehiclePageCopy.recordLabels.price),
         stringField('status', 'Estado', vehiclePageCopy.recordLabels.status),
         stringField('badge', 'Insignia', vehiclePageCopy.recordLabels.badge),

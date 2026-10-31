@@ -1,7 +1,7 @@
 ---
 import { sanityClient } from 'sanity:client';
 import { createSanityImageBuilder, type SanityImage } from '../../lib/sanityImage';
-import { assignSlugs, descriptionFacts, sortCarsForPresentation, statusLabel } from '../../lib/vehicles';
+import { assignSlugs, formatKilometers, sortCarsForPresentation, statusLabel, vehicleFacts } from '../../lib/vehicles';
 import { resolveVehiclePageCopy } from '../../lib/vehiclePageCopy';
 import '../../styles/global.css';
 import '../../styles/vehicle.css';
@@ -31,6 +31,7 @@ type CarRecord = {
   name: string;
   title?: string;
   year: number;
+  kilometers?: number;
   price: number;
   description?: string;
   image?: SanityImage;
@@ -49,7 +50,7 @@ export async function getStaticPaths() {
     sortCarsForPresentation(
       await sanityClient.fetch<CarRecord[]>(`*[_type == "car" && status in ["available", "reserved"]]
         | order(orderRank asc, _id asc){
-          _id, name, title, year, price, description,
+          _id, name, title, year, kilometers, price, description,
           image{..., ${imageFields}},
           images[]{..., ${imageFields}},
           status, featured, orderRank, badge, whatsappMessage,
@@ -122,7 +123,7 @@ const photos = sourceImages
   }))
   .filter((photo) => photo.src);
 const hasGallery = photos.length > 1;
-const facts = descriptionFacts(car.description);
+const facts = vehicleFacts({ description: car.description, kilometers: car.kilometers });
 const related = cars.filter((item) => item.slug !== car.slug).slice(0, 3);
 const modelUrl = car.model3d?.asset?.url;
 const consultMessage = car.whatsappMessage?.trim()
@@ -136,6 +137,9 @@ const description = car.description?.trim()
 const rows: { label: string; value: string; href?: string }[] = [
   { label: copy.recordLabels.name, value: car.name },
   { label: copy.recordLabels.year, value: String(car.year) },
+  ...(typeof car.kilometers === 'number'
+    ? [{ label: copy.recordLabels.kilometers, value: formatKilometers(car.kilometers) }]
+    : []),
   { label: copy.recordLabels.price, value: formatPrice(car.price) },
   { label: copy.recordLabels.status, value: statusLabel(car.status, copy.statusLabels) },
 ];

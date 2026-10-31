@@ -22,6 +22,7 @@ export const vehiclePageCopy = {
   recordLabels: {
     name: 'Nombre',
     year: 'Año',
+    kilometers: 'Kilómetros',
     price: 'Precio',
     status: 'Estado',
     badge: 'Insignia',
