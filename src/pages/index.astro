@@ -5,7 +5,6 @@ import fallbackHistory from '../../assets/who-are-we-image.jpg';
 import GoogleSiteTags from '../components/GoogleSiteTags.astro';
 import { createSanityImageBuilder, type SanityImage } from '../lib/sanityImage';
 import { assignSlugs, sortCarsForPresentation } from '../lib/vehicles';
-import { vehiclePageCopy } from '../lib/vehiclePageCopy';
 import '../styles/global.css';
 
 type Link = { label?: string; href?: string; openInNewTab?: boolean };
@@ -95,7 +94,7 @@ type HomePage = {
 
 const imageFields = `"asset": asset, alt, crop, hotspot`;
 
-const [siteSettings, homePage, carsFromCms, vehiclePage] = await Promise.all([
+const [siteSettings, homePage, carsFromCms] = await Promise.all([
   sanityClient.fetch<SiteSettings | null>(`*[_type == "siteSettings"][0]{
     identity{ brandName, tagline, logo{..., ${imageFields}} },
     contact, hours, locations, socialLinks,
@@ -117,11 +116,9 @@ const [siteSettings, homePage, carsFromCms, vehiclePage] = await Promise.all([
       images[]{..., ${imageFields}},
       status, featured, orderRank, kilometers, badge, whatsappMessage
     }`),
-  sanityClient.fetch<{ detailsLinkLabel?: string } | null>(`*[_id == "vehiclePage"][0]{ detailsLinkLabel }`),
 ]);
 
 const cars = assignSlugs(sortCarsForPresentation(carsFromCms));
-const detailsLinkLabel = vehiclePage?.detailsLinkLabel?.trim() || vehiclePageCopy.detailsLinkLabel;
 
 const settings = siteSettings ?? {};
 const home = homePage ?? {};
@@ -484,11 +481,17 @@ const structuredData = {
                         <h3 id={`vehiculo-titulo-${car._id}`}><a href={`/vehiculos/${car.slug}`}>{car.name}</a></h3>
                         <p class="vehicle-price">{formatPrice(car.price)}</p>
                         <div class="vehicle-card-actions">
-                          <a class="btn vehicle-btn-primary" target="_blank" rel="noopener" href={whatsappHref(car.whatsappMessage ?? `Hola AUTOS LA 15, me interesa el ${car.name}. ¿Me comparten más información?`)}>
+                          <a class="btn vehicle-btn-primary" href={`/vehiculos/${car.slug}`}>
                             {catalog.vehiclePrimaryButton ?? 'Consultar vehículo'}
                           </a>
-                          <a class="btn vehicle-btn-secondary" href="#contacto">{catalog.vehicleSecondaryButton ?? 'Agendar visita'}</a>
-                          <a class="vehicle-card-details" href={`/vehiculos/${car.slug}`}>{detailsLinkLabel}</a>
+                          <a
+                            class="btn vehicle-btn-secondary"
+                            target="_blank"
+                            rel="noopener"
+                            href={whatsappHref(car.whatsappMessage ?? `Hola AUTOS LA 15, me interesa el ${car.name}. ¿Me comparten más información?`)}
+                          >
+                            {catalog.vehicleSecondaryButton ?? 'Agendar visita'}
+                          </a>
                         </div>
                       </div>
                     </div>
